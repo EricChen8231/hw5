@@ -10,23 +10,20 @@
 #include "wordle.h"
 #include "dict-eng.h"
 using namespace std;
-
 // Function prototype
-void wordleHelper(std::string current, const std::set<std::string> &dict, std::set<std::string> &match, int pos, std::string floatingLetters);
-
-std::set<std::string> wordle(const std::string &in, const std::string &floating, const std::set<std::string> &dict);
+void wordleHelper(std::string current, const std::set<std::string> &dict, int pos, std::string floatingLetters, std::set<std::string> &match);
 
 // Primary wordle function
 std::set<std::string> wordle(const std::string &inputWord, const std::string &floatingLetters, const std::set<std::string> &dictionary)
 {
     std::set<std::string> output;
     int currentPosition = 0;
-    wordleHelper(inputWord, dictionary, output, currentPosition, floatingLetters);
+    wordleHelper(inputWord, dictionary, currentPosition, floatingLetters, output);
     return output;
 }
 
 // Helper function to recursively find wordle matches
-void wordleHelper(std::string currentWord, const std::set<std::string> &dictionary, std::set<std::string> &matches, int index, std::string floatingLetters)
+void wordleHelper(std::string currentWord, const std::set<std::string> &dictionary, int index, std::string floatingLetters, std::set<std::string> &matches)
 {
     int numDashes = 0;
     std::string floatingLettersCopy = floatingLetters;
@@ -47,7 +44,7 @@ void wordleHelper(std::string currentWord, const std::set<std::string> &dictiona
     // If the current index in the word is not a dash, move to the next index
     if (currentWord[index] != '-')
     {
-        wordleHelper(currentWord, dictionary, matches, index + 1, floatingLettersCopy);
+        wordleHelper(currentWord, dictionary, index + 1, floatingLettersCopy, matches);
         return;
     }
 
@@ -63,19 +60,19 @@ void wordleHelper(std::string currentWord, const std::set<std::string> &dictiona
     // If there are more dashes than floating letters, try all possible letters
     if (numDashes > static_cast<int>(floatingLettersCopy.size()))
     {
-        for (char letter = 'a'; letter <= 'z'; ++letter)
+        for (char letter = 'a'; letter <= 'z'; letter++)
         {
             if (floatingLettersCopy.find(letter) != std::string::npos)
             {
                 std::string temp = floatingLettersCopy;
                 currentWord[index] = letter;
                 temp.erase(temp.find(letter), 1);
-                wordleHelper(currentWord, dictionary, matches, index + 1, temp);
+                wordleHelper(currentWord, dictionary, index + 1, temp, matches);
             }
             else
             {
                 currentWord[index] = letter;
-                wordleHelper(currentWord, dictionary, matches, index + 1, floatingLettersCopy);
+                wordleHelper(currentWord, dictionary, index + 1, floatingLettersCopy, matches);
             }
         }
     }
@@ -86,7 +83,7 @@ void wordleHelper(std::string currentWord, const std::set<std::string> &dictiona
             std::string temp = floatingLettersCopy;
             currentWord[index] = letter;
             temp.erase(temp.find(letter), 1);
-            wordleHelper(currentWord, dictionary, matches, index + 1, temp);
+            wordleHelper(currentWord, dictionary, index + 1, temp, matches);
         }
     }
 }

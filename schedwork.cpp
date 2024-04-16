@@ -25,7 +25,7 @@ typedef std::vector<std::vector<bool>> AvailabilityMatrix;
 typedef std::vector<std::vector<Worker_T>> DailySchedule;
 
 // Add your implementation of schedule() and other helper functions here
-bool search(const AvailabilityMatrix &avail, const size_t dailyNeed, const size_t maxShifts, DailySchedule &sched, int currentDay, int currentWorker, vector<int> &shiftsCount, int startWorkerIndex)
+bool search(const AvailabilityMatrix &avail, const size_t dailyNeed, const size_t maxShifts, DailySchedule &sched, int currentDay, int currentWorker, int startWorkerIndex, vector<int> &shiftsCount)
 {
     int numDays = static_cast<int>(avail.size());
     int numWorkers = static_cast<int>(avail[0].size());
@@ -39,7 +39,7 @@ bool search(const AvailabilityMatrix &avail, const size_t dailyNeed, const size_
     // Move to the next day
     if (currentWorker >= dailyNeed)
     {
-        return search(avail, dailyNeed, maxShifts, sched, currentDay + 1, 0, shiftsCount, 0);
+        return search(avail, dailyNeed, maxShifts, sched, currentDay + 1, 0, 0, shiftsCount);
     }
 
     //  backtrack
@@ -49,28 +49,28 @@ bool search(const AvailabilityMatrix &avail, const size_t dailyNeed, const size_
     }
 
     // Start considering workers from startWorkerIndex
-    for (int workerIndex = startWorkerIndex; workerIndex < numWorkers; ++workerIndex)
+    for (int workerIndex = startWorkerIndex; workerIndex < numWorkers; workerIndex++)
     {
-        if (avail[currentDay][workerIndex] && shiftsCount[workerIndex] < maxShifts)
+        if (avail[currentDay][workerIndex] && shiftsCount[workerIndex] <maxShifts)
         {
-            
-            shiftsCount[workerIndex]++;
+
+            shiftsCount[workerIndex] += 1;
             sched[currentDay][currentWorker] = workerIndex;
 
             // Explore further with the next worker and increment the worker count
-            if (search(avail, dailyNeed, maxShifts, sched, currentDay, currentWorker + 1, shiftsCount, workerIndex + 1))
+            if (search(avail, dailyNeed, maxShifts, sched, currentDay, currentWorker + 1, workerIndex + 1, shiftsCount))
             {
-                return true; 
+                return true;
             }
 
             // Backtrack
             shiftsCount[workerIndex]--;
-            sched[currentDay][currentWorker] = -1;
+            sched[currentDay][currentWorker] += -1;
         }
     }
 
     // Continue with the next worker index
-    return search(avail, dailyNeed, maxShifts, sched, currentDay, currentWorker, shiftsCount, startWorkerIndex + 1);
+    return search(avail, dailyNeed, maxShifts, sched, currentDay, currentWorker, startWorkerIndex + 1, shiftsCount);
 }
 
 bool schedule(const AvailabilityMatrix &avail, const size_t dailyNeed, const size_t maxShifts, DailySchedule &sched)
@@ -88,6 +88,6 @@ bool schedule(const AvailabilityMatrix &avail, const size_t dailyNeed, const siz
     sched = vector<vector<Worker_T>>(numDays, vector<Worker_T>(dailyNeed, 0));
     vector<int> shiftsCount(numWorkers, 0);
 
-    // Start the depth-first search from day 0 and worker 0
-    return search(avail, dailyNeed, maxShifts, sched, 0, 0, shiftsCount, 0);
+    // Start the search from day 0 and worker 0
+    return search(avail, dailyNeed, maxShifts, sched, 0, 0,0, shiftsCount);
 }
