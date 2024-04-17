@@ -54,8 +54,9 @@ bool search(const AvailabilityMatrix &avail, const size_t dailyNeed, const size_
         if (avail[currentDay][workerIndex] && shiftsCount[workerIndex] <maxShifts)
         {
 
-            shiftsCount[workerIndex] += 1;
             sched[currentDay][currentWorker] = workerIndex;
+            shiftsCount[workerIndex] += 1;
+            
 
             // Explore further with the next worker and increment the worker count
             if (search(avail, dailyNeed, maxShifts, sched, currentDay, currentWorker + 1, workerIndex + 1, shiftsCount))

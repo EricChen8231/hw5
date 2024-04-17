@@ -1,8 +1,6 @@
 #ifndef RECCHECK
 // For debugging
 #include <iostream>
-// For std::remove
-#include <algorithm> 
 #include <map>
 #include <set>
 #endif
@@ -13,7 +11,7 @@ using namespace std;
 // Function prototype
 void wordleHelper(std::string current, const std::set<std::string> &dict, int pos, std::string floatingLetters, std::set<std::string> &match);
 
-// Primary wordle function
+
 std::set<std::string> wordle(const std::string &inputWord, const std::string &floatingLetters, const std::set<std::string> &dictionary)
 {
     std::set<std::string> output;
@@ -57,7 +55,7 @@ void wordleHelper(std::string currentWord, const std::set<std::string> &dictiona
         }
     }
 
-    // If there are more dashes than floating letters, try all possible letters
+    //  try all possible letters
     if (numDashes > static_cast<int>(floatingLettersCopy.size()))
     {
         for (char letter = 'a'; letter <= 'z'; letter++)
@@ -77,7 +75,7 @@ void wordleHelper(std::string currentWord, const std::set<std::string> &dictiona
         }
     }
     else
-    { // Otherwise, use floating letters
+    { //  use floating letters
         for (char letter : floatingLettersCopy)
         {
             std::string temp = floatingLettersCopy;
